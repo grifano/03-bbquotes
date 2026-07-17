@@ -14,5 +14,6 @@ struct CharacterModel: Decodable {
     let images: [URL]
     let aliases: [String]
     let portrayedBy: String
-    let status: DeathModel
+    let status: String
+    var death: DeathModel?
 }
