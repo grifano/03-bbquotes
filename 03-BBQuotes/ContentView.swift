@@ -11,11 +11,11 @@ struct ContentView: View {
     var body: some View {
         TabView {
             Tab("Breaking Bad", systemImage: "tortoise") {
-                Text("Breaking Bad View")
+                QuoteView(show: "Breaking Bad")
             }
             
             Tab("Better Call Saul", systemImage: "briefcase") {
-                Text("Better Call Saul View")
+                QuoteView(show: "Better Call Saul")
             }
         }
         .preferredColorScheme(.dark)
