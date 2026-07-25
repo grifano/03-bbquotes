@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct QuoteView: View {
-
+    
     let vm = ViewModel()
     let show: String
     
@@ -21,48 +21,79 @@ struct QuoteView: View {
                     .frame(width: geo.size.width * 2.7, height: geo.size.height * 1.2)
                 
                 VStack {
-                    Spacer(minLength: 100)
-                    Text("\"\(vm.quote.quote)\"")
-                        .minimumScaleFactor(0.5)
-                        .font(.system(size: 20, design: .serif))
-                        .foregroundStyle(.white)
-                        .multilineTextAlignment(.center)
-                        .padding(16)
-                        .background(.black.opacity(0.7))
-                        .clipShape(.rect(cornerRadius: 20))
-                        .padding(.horizontal, 20)
-                        .frame(maxWidth: geo.size.width)
-                        .padding(.bottom, 8)
-                    
-                    ZStack(alignment: .bottom) {
-                        AsyncImage(url: vm.character.images[5]) { image in
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .frame(width: geo.size.width / 1.4, height: geo.size.height / 2.2)
+                    VStack {
+                        Spacer(minLength: 100)
                         
-                        Text(vm.character.name)
-                            .font(.system(size: 18))
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(12)
-                            .background(.ultraThinMaterial)
+                        switch vm.status {
+                        case .notStarted:
+                            EmptyView()
+                            
+                        case .fetching:
+                            ProgressView()
+                            
+                        case .success:
+                            Text("\"\(vm.quote.quote)\"")
+                                .minimumScaleFactor(0.5)
+                                .font(.system(size: 20, design: .serif))
+                                .foregroundStyle(.white)
+                                .multilineTextAlignment(.center)
+                                .padding(16)
+                                .background(.black.opacity(0.7))
+                                .clipShape(.rect(cornerRadius: 20))
+                                .padding(.horizontal, 20)
+                                .frame(maxWidth: geo.size.width)
+                                .padding(.bottom, 8)
+                            
+                            ZStack(alignment: .bottom) {
+                                AsyncImage(url: vm.character.images[0]) { image in
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                } placeholder: {
+                                    ProgressView()
+                                }
+                                .frame(width: geo.size.width / 1.4, height: geo.size.height / 2.2)
+                                
+                                Text(vm.character.name)
+                                    .font(.system(size: 18))
+                                    .foregroundStyle(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(12)
+                                    .background(.ultraThinMaterial)
+                            }
+                            .frame(width: geo.size.width / 1.4, height: geo.size.height / 2.2)
+                            .clipShape(.rect(cornerRadius: 20))
+
+                            
+                        case .failed(let error):
+                            Text(error.localizedDescription)
+                                .minimumScaleFactor(0.5)
+                                .font(.system(size: 20, design: .serif))
+                                .foregroundStyle(.white)
+                                .multilineTextAlignment(.center)
+                                .padding(16)
+                                .background(.black.opacity(0.7))
+                                .clipShape(.rect(cornerRadius: 20))
+                                .padding(.horizontal, 20)
+                                .frame(maxWidth: geo.size.width)
+                                .padding(.bottom, 8)
+                        }
+                        Spacer()
+                        
                     }
-                    .frame(width: geo.size.width / 1.4, height: geo.size.height / 2.2)
-                    .clipShape(.rect(cornerRadius: 20))
+                    
                     
                     Button {
-                        print("pressed...")
+                        Task {
+                            await vm.getQuote(for: show)
+                        }
                     } label: {
-                        Text("Get a quote")
+                        Text("Get Randoom Quote")
                             .buttonStyle(.glassProminent)
                             .padding(.horizontal, 24)
                             .padding(.vertical, 20)
                             .frame(width: geo.size.width / 1.1)
-                            .background(.breakingBadGreen.opacity(0.9))
+                            .background(Color("\(show.replacingOccurrences(of: " ", with: ""))Button").opacity(0.9))
                             .foregroundStyle(.white)
                             .font(.system(size: 22, weight: .semibold))
                             .clipShape(.capsule)
@@ -71,7 +102,7 @@ struct QuoteView: View {
                     }
                     .padding(.top, 8)
                     
-                    Spacer(minLength: 100)
+                    Spacer(minLength: 120)
                 }
                 .frame(width: geo.size.width, height: geo.size.height)
             }

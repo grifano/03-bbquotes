@@ -8,8 +8,15 @@
 import Foundation
 
 struct FetchSerwises {
-    private enum FetchError: Error {
-        case badResponse
+    private enum FetchError: Error, LocalizedError {
+        case badResponse(String)
+        
+        var errorDescription: String? {
+            switch self {
+            case .badResponse(let message):
+                    return "\(message) bad response from server"
+            }
+        }
     }
     
     private let baseUrl = URL(string: "https://breaking-bad-api-six.vercel.app/api")!
@@ -22,7 +29,7 @@ struct FetchSerwises {
         // Fetch data
         let (data, response) = try await URLSession.shared.data(from: fetchUrl)
         guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw FetchError.badResponse
+            throw FetchError.badResponse("Quotes fetcher: ")
         }
         
         // Decode data
@@ -32,12 +39,13 @@ struct FetchSerwises {
     }
     
     func fetchCharacter(_ name: String) async throws -> CharacterModel {
-        let characterUrl = baseUrl.appendingPathExtension("characters")
+        let characterUrl = baseUrl.appending(path: "characters")
         let fetchUrl = characterUrl.appending(queryItems: [URLQueryItem(name: "name", value: name)])
         
         let (data, response) = try await URLSession.shared.data(from: fetchUrl)
         guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw FetchError.badResponse
+            print("fetchChar: \(response)")
+            throw FetchError.badResponse("Characters fetcher: ")
         }
         
         let decoder = JSONDecoder()
@@ -49,11 +57,11 @@ struct FetchSerwises {
     }
     
     func fetchDeath(for character: String) async throws -> DeathModel? {
-        let fetchUrl = baseUrl.appending(path: "death")
+        let fetchUrl = baseUrl.appending(path: "deaths")
         
         let (data, response) = try await URLSession.shared.data(from: fetchUrl)
         guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw FetchError.badResponse
+            throw FetchError.badResponse("Deaths fetcher: ")
         }
         
         let decoder = JSONDecoder()
