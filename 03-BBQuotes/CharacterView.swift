@@ -58,8 +58,40 @@ struct CharacterView: View {
                                     Text("• \(alias)")
                                 }
                             }
+                            
+                            DisclosureGroup("Status (Spoiler allert!): ") {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(character.status)
+                                        .font(.system(size: 16))
+                                    
+                                    if let death = character.death {
+                                        AsyncImage(url: death.image) { image in
+                                                image
+                                                .resizable()
+                                                .scaledToFit()
+                                                .clipShape(.rect(cornerRadius: 12))
+                                        } placeholder: {
+                                            ProgressView()
+                                        }
+                                        
+                                        Text("How:")
+                                            .font(.headline)
+                                        Text(death.details)
+                                            .font(.system(size: 16))
+                                        
+                                        Text("Last words:")
+                                            .font(.headline)
+                                        Text(death.lastWords)
+                                            .font(.system(size: 16))
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .font(.headline)
+                            .tint(.primary)
                         }
-                        .font(.system(size: 16))                        
+                        .padding(.bottom, 50)
+                        .font(.system(size: 16))
                     }
                     .frame(width: geo.size.width / 1.2, alignment: .leading)
                     
