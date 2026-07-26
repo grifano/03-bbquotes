@@ -12,6 +12,8 @@ struct QuoteView: View {
     let vm = ViewModel()
     let show: String
     
+    @State var isCharacterViewActive = false
+    
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -63,6 +65,9 @@ struct QuoteView: View {
                             }
                             .frame(width: geo.size.width / 1.4, height: geo.size.height / 2.2)
                             .clipShape(.rect(cornerRadius: 20))
+                            .onTapGesture {
+                                isCharacterViewActive.toggle()
+                            }
 
                             
                         case .failed(let error):
@@ -109,6 +114,9 @@ struct QuoteView: View {
             .frame(width: geo.size.width, height: geo.size.height)
         }
         .ignoresSafeArea()
+        .sheet(isPresented: $isCharacterViewActive) {
+            CharacterView(character: vm.character, show: show)
+        }
     }
 }
 
