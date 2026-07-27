@@ -8,47 +8,45 @@
 import SwiftUI
 
 struct CharacterView: View {
+    @Environment(\.dismiss) var dismiss
+    
     let character: CharacterModel
     let show: String
     let scrollId = 1
     
     var body: some View {
         GeometryReader { geo in
-            ScrollViewReader { proxy in
-                ZStack(alignment: .top) {
-                    Image(show.lowercased().replacingOccurrences(of: " ", with: ""))
-                        .resizable()
-                        .scaledToFit()
-                    
-                    ScrollView {
-                        TabView {
-                            ForEach(character.images, id: \.self) {characterImageUrl in
-                                AsyncImage(url: characterImageUrl) { image in
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                } placeholder: {
-                                    ProgressView()
+            ZStack {
+                
+            }
+            .frame(width: geo.size.width, height: geo.size.height)
+            .blur(radius: 6)
+            
+            NavigationStack {
+                ScrollViewReader { proxy in
+                    ZStack(alignment: .top) {
+                        Image(show.removeEmtyAndLoverCase())
+                            .resizable()
+                            .scaledToFit()
+                        
+                        ScrollView {
+                            TabView {
+                                ForEach(character.images, id: \.self) {characterImageUrl in
+                                    AsyncImage(url: characterImageUrl) { image in
+                                        image
+                                            .resizable()
+                                            .scaledToFill()
+                                    } placeholder: {
+                                        ProgressView()
+                                    }
                                 }
                             }
-                        }
-                        .tabViewStyle(.page)
-                        .frame(width: geo.size.width / 1.2, height: geo.size.height / 1.9)
-                        .clipShape(.rect(cornerRadius: 20))
-                        .padding(.top, 100)
-                        
-                        VStack(alignment: .leading) {
-                            Text(character.name)
-                                .font(.largeTitle)
-                            
-                            Text("Portrayed By: \(character.portrayedBy)")
-                                .font(.headline)
-                            
-                            Divider()
+                            .tabViewStyle(.page)
+                            .frame(width: geo.size.width / 1.2, height: geo.size.height / 1.9)
+                            .clipShape(.rect(cornerRadius: 20))
+                            .padding(.top, 40)
                             
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("Character Info")
-                                    .font(.title)
                                 Text("Born: \(character.birthday)")
                                     .font(.headline)
                                 Divider()
@@ -104,12 +102,33 @@ struct CharacterView: View {
                             }
                             .padding(.bottom, 50)
                             .font(.system(size: 16))
+                            .frame(width: geo.size.width / 1.2, alignment: .leading)
+                            .id(scrollId)
                         }
-                        .frame(width: geo.size.width / 1.2, alignment: .leading)
-                        .id(scrollId)
-                        
+                        .scrollIndicators(.hidden)
+                        .navigationTitle(character.name)
+                        .navigationSubtitle(character.portrayedBy)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Image(systemName: "xmark")
+                                }
+                            }
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Image(systemName: "checkmark")
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(Color("\(show.removeEmptySpaces())Button"))
+                            }
+                        }
+                        .presentationDetents([.large])
                     }
-                    .scrollIndicators(.hidden)
                 }
             }
         }
@@ -118,5 +137,5 @@ struct CharacterView: View {
 }
 
 #Preview {
-    CharacterView(character: ViewModel().character, show: "Breaking Bad")
+    CharacterView(character: ViewModel().character, show: Constants.bbName)
 }
