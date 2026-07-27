@@ -17,6 +17,10 @@ struct ContentView: View {
             Tab("Better Call Saul", systemImage: "briefcase") {
                 QuoteView(show: "Better Call Saul")
             }
+            
+            Tab("El Camino", systemImage: "car") {
+                QuoteView(show: "El Camino")
+            }
         }
         .preferredColorScheme(.dark)
     }

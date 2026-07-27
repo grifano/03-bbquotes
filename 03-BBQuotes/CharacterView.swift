@@ -19,13 +19,18 @@ struct CharacterView: View {
                     .scaledToFit()
                 
                 ScrollView {
-                    AsyncImage(url: character.images[0]) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } placeholder: {
-                        ProgressView()
+                    TabView {
+                        ForEach(character.images, id: \.self) {characterImageUrl in
+                            AsyncImage(url: characterImageUrl) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                        }
                     }
+                    .tabViewStyle(.page)
                     .frame(width: geo.size.width / 1.2, height: geo.size.height / 1.9)
                     .clipShape(.rect(cornerRadius: 20))
                     .padding(.top, 100)
@@ -81,7 +86,7 @@ struct CharacterView: View {
                                         
                                         Text("Last words:")
                                             .font(.headline)
-                                        Text(death.lastWords)
+                                        Text("\"\(death.lastWords)\"")
                                             .font(.system(size: 16))
                                     }
                                 }
