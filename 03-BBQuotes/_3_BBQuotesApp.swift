@@ -26,3 +26,12 @@ struct _3_BBQuotesApp: App {
  ✅ Create static constants for show names
  ✅ Update sheet and add topbar, so it will be contrast with background image
  */
+
+/**
+ Challenges List:
+ ✅ Fetch Quote on launch
+ ✅ Show random character image
+ - Fetch random Character
+ - Fetch Random quote on character screen
+ - Fetch simpson quote randomly
+ */

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MainView: View {
     
-    let vm = ViewModel()
+    @State var vm = ViewModel()
     let show: String
     
     @State var isCharacterViewActive = false
@@ -23,48 +23,22 @@ struct MainView: View {
                     .frame(width: geo.size.width * 2.7, height: geo.size.height * 1.2)
                 
                 VStack(spacing: 20) {
+                    Spacer(minLength: 60)
+                    
                     VStack(spacing: 8) {
-                        Spacer(minLength: 100)
-                        
                         switch vm.status {
                         case .notStarted:
                             EmptyView()
                             
                         case .fetching:
                             ProgressView()
+                                .scaleEffect(2)
                             
                         case .successQuote:
-                            Text("\"\(vm.quote.quote)\"")
-                                .minimumScaleFactor(0.5)
-                                .font(.system(size: 20, design: .serif))
-                                .foregroundStyle(.white)
-                                .multilineTextAlignment(.center)
-                                .padding(16)
-                                .background(.black.opacity(0.7))
-                                .clipShape(.rect(cornerRadius: 20))
-                            
-                            ZStack(alignment: .bottom) {
-                                AsyncImage(url: vm.character.images[0]) { image in
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                } placeholder: {
-                                    ProgressView()
+                            QuoteView(quote: vm.quote.quote, character: vm.character, images: vm.character.images, width: geo.size.width / 1, height: geo.size.height / 1.6)
+                                .onTapGesture {
+                                    isCharacterViewActive.toggle()
                                 }
-                                .frame(width: geo.size.width / 1.2, height: geo.size.height / 2)
-                                
-                                Text(vm.character.name)
-                                    .font(.system(size: 18))
-                                    .foregroundStyle(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(12)
-                                    .background(.ultraThinMaterial)
-                            }
-                            .clipShape(.rect(cornerRadius: 20))
-                            .onTapGesture {
-                                isCharacterViewActive.toggle()
-                            }
-                            .frame(width: geo.size.width / 1.2, height: geo.size.height / 2)
                             
                         case .successEpisode:
                             EpisodeView(episode: vm.episode)
@@ -81,8 +55,8 @@ struct MainView: View {
                                 .padding(.horizontal, 20)
                                 .frame(maxWidth: geo.size.width)
                         }
-                        Spacer()
                     }
+                    .frame(width: geo.size.width / 1, height: geo.size.height / 1.6)
                     
                     HStack {
                         Button {
@@ -101,8 +75,6 @@ struct MainView: View {
                                 .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
                                 .shadow(color: Color.black.opacity(0.3), radius: 16, x: 0, y: 2)
                         }
-                        
-                        Spacer()
                         
                         Button {
                             Task {
@@ -123,7 +95,7 @@ struct MainView: View {
                         }
                     }
                     
-                    Spacer(minLength: 120)
+                    Spacer(minLength: 100)
                 }
                 .padding(.horizontal, 20)
                 .frame(width: geo.size.width, height: geo.size.height)
@@ -141,6 +113,11 @@ struct MainView: View {
         .ignoresSafeArea()
         .sheet(isPresented: $isCharacterViewActive) {
             CharacterView(character: vm.character, show: show)
+        }
+        .onAppear() {
+                Task {
+                    await vm.getQuote(for: show)
+                }
         }
     }
 }

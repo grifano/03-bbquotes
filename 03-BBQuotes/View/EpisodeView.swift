@@ -23,13 +23,20 @@ struct EpisodeView: View {
             }
             
             AsyncImage(url: episode.image) { image in
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .clipShape(.rect(cornerRadius: 20))
+                VStack(alignment: .leading) {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(.rect(cornerRadius: 20))
+                        .frame(height: 300)
+                }
             } placeholder: {
-                ProgressView()
+                RoundedRectangle(cornerRadius: 20)
+                    .opacity(0.4)
+                    .redacted(reason: .placeholder)
+                    .frame(height: 300)
             }
+            .frame(height: 300)
             
             Text(episode.synopsis)
                 .minimumScaleFactor(0.5)
@@ -37,11 +44,11 @@ struct EpisodeView: View {
             Divider()
             Text("Written By: \(episode.writtenBy)")
             Text("Directed By: \(episode.directedBy)")
-
+            
         }
         .padding()
         .foregroundStyle(.white)
-        .background(.black.opacity(0.6))
+        .background(.black.opacity(0.8))
         .clipShape(.rect(cornerRadius: 20))
     }
 }

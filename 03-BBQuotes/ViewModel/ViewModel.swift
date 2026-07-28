@@ -37,6 +37,7 @@ class ViewModel {
         
         let episodeData = try! Data(contentsOf: Bundle.main.url(forResource: "sampleepisode", withExtension: "json")!)
         episode = try! decoder.decode(EpisodeModel.self, from: episodeData)
+        
     }
     
     func getQuote(for show: String) async {
