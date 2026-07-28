@@ -44,7 +44,6 @@ struct FetchSerwises {
         
         let (data, response) = try await URLSession.shared.data(from: fetchUrl)
         guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            print("fetchChar: \(response)")
             throw FetchError.badResponse("Characters fetcher: ")
         }
         
@@ -76,5 +75,22 @@ struct FetchSerwises {
         }
         
         return nil
+    }
+    
+    func fetchEpisode(_ show: String) async throws -> EpisodeModel? {
+        let episodeUrl = baseUrl.appending(path: "episodes")
+        let fetchUrl = episodeUrl.appending(queryItems: [URLQueryItem(name: "production", value: show)])
+        
+        let (data, response) = try await URLSession.shared.data(from: fetchUrl)
+        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+            throw FetchError.badResponse("Episodes fetcher: ")
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        let episodes = try decoder.decode([EpisodeModel].self, from: data)
+        
+        return episodes.randomElement()
     }
 }

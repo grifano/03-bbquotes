@@ -1,5 +1,5 @@
 //
-//  QuoteView.swift
+//  MainView.swift
 //  03-BBQuotes
 //
 //  Created by sorlenko on 16/07/2026.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct QuoteView: View {
+struct MainView: View {
     
     let vm = ViewModel()
     let show: String
@@ -22,8 +22,8 @@ struct QuoteView: View {
                     .scaledToFill()
                     .frame(width: geo.size.width * 2.7, height: geo.size.height * 1.2)
                 
-                VStack {
-                    VStack {
+                VStack(spacing: 20) {
+                    VStack(spacing: 8) {
                         Spacer(minLength: 100)
                         
                         switch vm.status {
@@ -33,7 +33,7 @@ struct QuoteView: View {
                         case .fetching:
                             ProgressView()
                             
-                        case .success:
+                        case .successQuote:
                             Text("\"\(vm.quote.quote)\"")
                                 .minimumScaleFactor(0.5)
                                 .font(.system(size: 20, design: .serif))
@@ -42,9 +42,6 @@ struct QuoteView: View {
                                 .padding(16)
                                 .background(.black.opacity(0.7))
                                 .clipShape(.rect(cornerRadius: 20))
-                                .padding(.horizontal, 20)
-                                .frame(maxWidth: geo.size.width)
-                                .padding(.bottom, 8)
                             
                             ZStack(alignment: .bottom) {
                                 AsyncImage(url: vm.character.images[0]) { image in
@@ -54,7 +51,7 @@ struct QuoteView: View {
                                 } placeholder: {
                                     ProgressView()
                                 }
-                                .frame(width: geo.size.width / 1.4, height: geo.size.height / 2.2)
+                                .frame(width: geo.size.width / 1.2, height: geo.size.height / 2)
                                 
                                 Text(vm.character.name)
                                     .font(.system(size: 18))
@@ -63,12 +60,14 @@ struct QuoteView: View {
                                     .padding(12)
                                     .background(.ultraThinMaterial)
                             }
-                            .frame(width: geo.size.width / 1.4, height: geo.size.height / 2.2)
                             .clipShape(.rect(cornerRadius: 20))
                             .onTapGesture {
                                 isCharacterViewActive.toggle()
                             }
+                            .frame(width: geo.size.width / 1.2, height: geo.size.height / 2)
                             
+                        case .successEpisode:
+                            EpisodeView(episode: vm.episode)
                             
                         case .failed(let error):
                             Text(error.localizedDescription)
@@ -81,34 +80,52 @@ struct QuoteView: View {
                                 .clipShape(.rect(cornerRadius: 20))
                                 .padding(.horizontal, 20)
                                 .frame(maxWidth: geo.size.width)
-                                .padding(.bottom, 8)
                         }
                         Spacer()
-                        
                     }
                     
-                    
-                    Button {
-                        Task {
-                            await vm.getQuote(for: show)
+                    HStack {
+                        Button {
+                            Task {
+                                await vm.getQuote(for: show)
+                            }
+                        } label: {
+                            Text("Get a Quote")
+                                .buttonStyle(.glassProminent)
+                                .padding(.vertical, 16)
+                                .padding(.horizontal, 24)
+                                .background(Color("\(show.removeEmptySpaces())Button").opacity(0.9))
+                                .foregroundStyle(.white)
+                                .font(.system(size: 18, weight: .semibold))
+                                .clipShape(.capsule)
+                                .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
+                                .shadow(color: Color.black.opacity(0.3), radius: 16, x: 0, y: 2)
                         }
-                    } label: {
-                        Text("Get Randoom Quote")
-                            .buttonStyle(.glassProminent)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 20)
-                            .frame(width: geo.size.width / 1.1)
-                            .background(Color("\(show.removeEmptySpaces())Button").opacity(0.9))
-                            .foregroundStyle(.white)
-                            .font(.system(size: 22, weight: .semibold))
-                            .clipShape(.capsule)
-                            .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
-                            .shadow(color: Color.black.opacity(0.3), radius: 16, x: 0, y: 2)
+                        
+                        Spacer()
+                        
+                        Button {
+                            Task {
+                                await vm.getEpisode(for: show)
+                            }
+                        } label: {
+                            Text("Get Episode")
+                                .lineLimit(1)
+                                .buttonStyle(.glassProminent)
+                                .padding(.vertical, 16)
+                                .padding(.horizontal, 24)
+                                .background(Color("\(show.removeEmptySpaces())Button").opacity(0.9))
+                                .foregroundStyle(.white)
+                                .font(.system(size: 18, weight: .semibold))
+                                .clipShape(.capsule)
+                                .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
+                                .shadow(color: Color.black.opacity(0.3), radius: 16, x: 0, y: 2)
+                        }
                     }
-                    .padding(.top, 8)
                     
                     Spacer(minLength: 120)
                 }
+                .padding(.horizontal, 20)
                 .frame(width: geo.size.width, height: geo.size.height)
             }
             .frame(width: geo.size.width, height: geo.size.height)
@@ -119,8 +136,8 @@ struct QuoteView: View {
                         .opacity(0.5)
                 }
             }
-            
         }
+        .preferredColorScheme(.dark)
         .ignoresSafeArea()
         .sheet(isPresented: $isCharacterViewActive) {
             CharacterView(character: vm.character, show: show)
@@ -129,5 +146,5 @@ struct QuoteView: View {
 }
 
 #Preview {
-    QuoteView(show: Constants.bbName)
+    MainView(show: Constants.bbName)
 }
