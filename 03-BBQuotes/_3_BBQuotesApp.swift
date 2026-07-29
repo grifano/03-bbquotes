@@ -31,7 +31,7 @@ struct _3_BBQuotesApp: App {
  Challenges List:
  ✅ Fetch Quote on launch
  ✅ Show random character image
- - Fetch random Character
+ ✅ Fetch random Character
  - Fetch Random quote on character screen
  - Fetch simpson quote randomly
  */

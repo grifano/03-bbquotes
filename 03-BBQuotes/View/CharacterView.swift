@@ -122,6 +122,7 @@ struct CharacterView: View {
                                     dismiss()
                                 } label: {
                                     Image(systemName: "checkmark")
+                                        .foregroundStyle(.white)
                                 }
                                 .buttonStyle(.borderedProminent)
                                 .tint(Color("\(show.removeEmptySpaces())Button"))

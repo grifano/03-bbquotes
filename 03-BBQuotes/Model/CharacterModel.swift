@@ -16,6 +16,7 @@ struct CharacterModel: Decodable {
     let portrayedBy: String
     let status: String
     var death: DeathModel?
+    let productions: [String]
     
     enum CodingKeys: CodingKey {
         case name
@@ -25,6 +26,7 @@ struct CharacterModel: Decodable {
         case aliases
         case portrayedBy
         case status
+        case productions
     }
     
     init(from decoder: any Decoder) throws {
@@ -36,6 +38,7 @@ struct CharacterModel: Decodable {
         self.aliases = try container.decode([String].self, forKey: .aliases)
         self.portrayedBy = try container.decode(String.self, forKey: .portrayedBy)
         self.status = try container.decode(String.self, forKey: .status)
+        self.productions = try container.decode([String].self, forKey: .productions)
         
         let deathDecoder = JSONDecoder()
         deathDecoder.keyDecodingStrategy = .convertFromSnakeCase

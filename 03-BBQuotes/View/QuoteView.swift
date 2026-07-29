@@ -24,7 +24,7 @@ struct QuoteView: View {
                     .padding(16)
                     .background(.black.opacity(0.7))
                     .clipShape(.rect(cornerRadius: 20))
-                    .frame(width: width / 1.2)
+                    .frame(width: width)
                 
                 ZStack(alignment: .bottom) {
                     
@@ -36,7 +36,7 @@ struct QuoteView: View {
                         } placeholder: {
                             
                         }
-                        .frame(width: width / 1.2, height: height / 1.2)
+                        .frame(width: width, height: height / 1.2)
                     }
                     
                     Text(character.name)
@@ -46,7 +46,7 @@ struct QuoteView: View {
                         .padding(12)
                         .background(.ultraThinMaterial)
                 }
-                .frame(width: width / 1.2, height: height / 1.2)
+                .frame(width: width, height: height / 1.2)
                 .clipShape(.rect(cornerRadius: 20))
             }
         }

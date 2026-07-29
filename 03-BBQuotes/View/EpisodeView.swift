@@ -9,50 +9,52 @@ import SwiftUI
 
 struct EpisodeView: View {
     let episode: EpisodeModel
+    let width: CGFloat
+    let height: CGFloat
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(episode.title)
-                .font(.largeTitle)
-            HStack {
-                Text(episode.seasonEpisode)
-                    .font(.headline)
-                Spacer()
-                Text(episode.airDate)
-                    .font(.headline)
-            }
-            
-            AsyncImage(url: episode.image) { image in
-                VStack(alignment: .leading) {
+        ScrollViewReader { proxy in
+            ScrollView {
+                AsyncImage(url: episode.image) { image in
                     image
                         .resizable()
-                        .scaledToFit()
-                        .clipShape(.rect(cornerRadius: 20))
-                        .frame(height: 300)
+                        .scaledToFill()
+                } placeholder: {
+                    ProgressView()
                 }
-            } placeholder: {
-                RoundedRectangle(cornerRadius: 20)
-                    .opacity(0.4)
-                    .redacted(reason: .placeholder)
-                    .frame(height: 300)
+                .frame(width: width, height: height / 1.4)
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    
+                    Text(episode.title)
+                        .font(.largeTitle)
+                    Text(episode.seasonEpisode)
+                        .font(.headline)
+                    
+                    Text("Air Date: \(episode.airDate)")
+                        .font(.headline)
+                    Divider()
+                    Text(episode.synopsis)
+                        .font(.headline)
+                    Divider()
+                    Text("Written By: \(episode.writtenBy)")
+                        .font(.headline)
+                    Text("Directed By: \(episode.directedBy)")
+                        .font(.headline)
+                }
+                .padding(.bottom, 50)
+                .font(.system(size: 16))
+                .frame(width: width / 1.1)
             }
-            .frame(height: 300)
-            
-            Text(episode.synopsis)
-                .minimumScaleFactor(0.5)
-            
-            Divider()
-            Text("Written By: \(episode.writtenBy)")
-            Text("Directed By: \(episode.directedBy)")
-            
+            .scrollIndicators(.hidden)
         }
-        .padding()
-        .foregroundStyle(.white)
         .background(.black.opacity(0.8))
+        .foregroundStyle(.white)
+        .frame(width: width, height: height)
         .clipShape(.rect(cornerRadius: 20))
     }
 }
 
-#Preview {
-    EpisodeView(episode: ViewModel().episode)
-}
+//#Preview {
+//    EpisodeView(episode: ViewModel().episode)
+//}

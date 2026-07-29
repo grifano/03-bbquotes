@@ -55,6 +55,22 @@ struct FetchSerwises {
         return characters[0]
     }
     
+    func fetchRandomCharacter() async throws -> CharacterModel {
+        let fetchUrl = baseUrl.appending(path: "characters/random")
+        
+        let (data, response) = try await URLSession.shared.data(from: fetchUrl)
+        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+            throw FetchError.badResponse("Random characters fetcher: ")
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        let character = try decoder.decode(CharacterModel.self, from: data)
+        
+        return character
+    }
+    
     func fetchDeath(for character: String) async throws -> DeathModel? {
         let fetchUrl = baseUrl.appending(path: "deaths")
         

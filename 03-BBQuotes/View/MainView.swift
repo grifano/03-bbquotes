@@ -35,13 +35,16 @@ struct MainView: View {
                                 .scaleEffect(2)
                             
                         case .successQuote:
-                            QuoteView(quote: vm.quote.quote, character: vm.character, images: vm.character.images, width: geo.size.width / 1, height: geo.size.height / 1.6)
+                            QuoteView(quote: vm.quote.quote, character: vm.character, images: vm.character.images, width: geo.size.width / 1.1, height: geo.size.height / 1.6)
                                 .onTapGesture {
                                     isCharacterViewActive.toggle()
                                 }
                             
                         case .successEpisode:
-                            EpisodeView(episode: vm.episode)
+                            EpisodeView(episode: vm.episode, width: geo.size.width / 1.1, height: geo.size.height / 1.7)
+                            
+                        case .successCharacter:
+                            RandomCharacterView(character: vm.character, show: show, width: geo.size.width / 1.1, height: geo.size.height / 1.2)
                             
                         case .failed(let error):
                             Text(error.localizedDescription)
@@ -58,19 +61,38 @@ struct MainView: View {
                     }
                     .frame(width: geo.size.width / 1, height: geo.size.height / 1.6)
                     
-                    HStack {
+                    VStack(spacing: 8) {
+                        Button {
+                            Task {
+                                await vm.getRandomCharacter(from: show)
+                            }
+                        } label: {
+                            Text("Get Character")
+                                .frame(maxWidth: .infinity)
+                                .buttonStyle(.glassProminent)
+                                .padding(.vertical, 14)
+                                .padding(.horizontal, 20)
+                                .background(Color("\(show.removeEmptySpaces())Button").opacity(0.9))
+                                .foregroundStyle(.white)
+                                .font(.system(size: 14, weight: .semibold))
+                                .clipShape(.capsule)
+                                .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
+                                .shadow(color: Color.black.opacity(0.3), radius: 16, x: 0, y: 2)
+                        }
+                        
                         Button {
                             Task {
                                 await vm.getQuote(for: show)
                             }
                         } label: {
-                            Text("Get a Quote")
+                            Text("Get Quote")
+                                .frame(maxWidth: .infinity)
                                 .buttonStyle(.glassProminent)
-                                .padding(.vertical, 16)
-                                .padding(.horizontal, 24)
+                                .padding(.vertical, 14)
+                                .padding(.horizontal, 20)
                                 .background(Color("\(show.removeEmptySpaces())Button").opacity(0.9))
                                 .foregroundStyle(.white)
-                                .font(.system(size: 18, weight: .semibold))
+                                .font(.system(size: 14, weight: .semibold))
                                 .clipShape(.capsule)
                                 .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
                                 .shadow(color: Color.black.opacity(0.3), radius: 16, x: 0, y: 2)
@@ -82,13 +104,13 @@ struct MainView: View {
                             }
                         } label: {
                             Text("Get Episode")
-                                .lineLimit(1)
+                                .frame(maxWidth: .infinity)
                                 .buttonStyle(.glassProminent)
-                                .padding(.vertical, 16)
-                                .padding(.horizontal, 24)
+                                .padding(.vertical, 14)
+                                .padding(.horizontal, 20)
                                 .background(Color("\(show.removeEmptySpaces())Button").opacity(0.9))
                                 .foregroundStyle(.white)
-                                .font(.system(size: 18, weight: .semibold))
+                                .font(.system(size: 14, weight: .semibold))
                                 .clipShape(.capsule)
                                 .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
                                 .shadow(color: Color.black.opacity(0.3), radius: 16, x: 0, y: 2)
@@ -97,8 +119,7 @@ struct MainView: View {
                     
                     Spacer(minLength: 100)
                 }
-                .padding(.horizontal, 20)
-                .frame(width: geo.size.width, height: geo.size.height)
+                .frame(width: geo.size.width / 1.1, height: geo.size.height)
             }
             .frame(width: geo.size.width, height: geo.size.height)
             .blur(radius: isCharacterViewActive ? 4 : 0)
