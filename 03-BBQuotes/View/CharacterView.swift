@@ -10,7 +10,7 @@ import SwiftUI
 struct CharacterView: View {
     @Environment(\.dismiss) var dismiss
     
-    let character: CharacterModel
+    let vm: ViewModel
     let show: String
     let scrollId = 1
     
@@ -31,7 +31,7 @@ struct CharacterView: View {
                         
                         ScrollView {
                             TabView {
-                                ForEach(character.images, id: \.self) {characterImageUrl in
+                                ForEach(vm.character.images, id: \.self) {characterImageUrl in
                                     AsyncImage(url: characterImageUrl) { image in
                                         image
                                             .resizable()
@@ -41,35 +41,59 @@ struct CharacterView: View {
                                     }
                                 }
                             }
+                            .overlay(alignment: .bottom) {
+                                VStack(spacing: 16) {
+                                    Text(vm.quote.quote)
+                                        .foregroundStyle(.white)
+                                    Button {
+                                        Task {
+                                            await vm.getCharacterQuote(from: show, by: vm.character.name)
+                                        }
+                                    } label: {
+                                        Image(systemName: "repeat.circle")
+                                            .font(.system(size: 44))
+                                            .foregroundStyle(.white)
+                                    }
+                                }
+                                .padding(.top, 16)
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, 44)
+                                .frame(maxWidth: .infinity)
+                                .multilineTextAlignment(.center)
+                                .background(.black.opacity(0.6))
+                                .clipShape(.rect(cornerRadius: 12))
+                            }
                             .tabViewStyle(.page)
                             .frame(width: geo.size.width / 1.2, height: geo.size.height / 1.9)
                             .clipShape(.rect(cornerRadius: 20))
                             .padding(.top, 40)
                             
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("Born: \(character.birthday)")
+                                
+                                Divider()
+                                Text("Born: \(vm.character.birthday)")
                                     .font(.headline)
                                 Divider()
                                 Text("Occupations:")
                                     .font(.headline)
-                                ForEach(character.occupations, id: \.self) { occupation in
+                                ForEach(vm.character.occupations, id: \.self) { occupation in
                                     Text("• \(occupation)")
                                 }
                                 Divider()
                                 Text("Nicknames:")
                                     .font(.headline)
-                                if character.aliases.count > 0 {
-                                    ForEach(character.aliases, id: \.self) { alias in
+                                if vm.character.aliases.count > 0 {
+                                    ForEach(vm.character.aliases, id: \.self) { alias in
                                         Text("• \(alias)")
                                     }
                                 }
                                 
                                 DisclosureGroup("Status (Spoiler allert!): ") {
                                     VStack(alignment: .leading, spacing: 6) {
-                                        Text(character.status)
+                                        Text(vm.character.status)
                                             .font(.system(size: 16))
                                         
-                                        if let death = character.death {
+                                        if let death = vm.character.death {
                                             AsyncImage(url: death.image) { image in
                                                 image
                                                     .resizable()
@@ -106,8 +130,8 @@ struct CharacterView: View {
                             .id(scrollId)
                         }
                         .scrollIndicators(.hidden)
-                        .navigationTitle(character.name)
-                        .navigationSubtitle(character.portrayedBy)
+                        .navigationTitle(vm.character.name)
+                        .navigationSubtitle(vm.character.portrayedBy)
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
@@ -138,5 +162,5 @@ struct CharacterView: View {
 }
 
 #Preview {
-    CharacterView(character: ViewModel().character, show: Constants.bbName)
+    CharacterView(vm: ViewModel(), show: Constants.bbName)
 }

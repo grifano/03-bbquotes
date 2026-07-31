@@ -53,6 +53,16 @@ class ViewModel {
         }
     }
     
+    func getCharacterQuote(from show: String, by character: String) async {
+        do {
+            status = .fetching
+            quote = try await fetcher.fetchCharacterQuote(from: show, by: character)
+            status = .successQuote
+        } catch {
+            status = .failed(error: error)
+        }
+    }
+    
     func getEpisode(for show: String) async {
         status = .fetching
         do {

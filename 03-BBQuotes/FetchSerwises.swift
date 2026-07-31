@@ -38,6 +38,23 @@ struct FetchSerwises {
         return quote
     }
     
+    func fetchCharacterQuote(from show: String, by character: String) async throws -> QuoteModel {
+        // Build fetch url
+        let quotesUrl = baseUrl.appending(path: "quotes/random")
+        let fetchUrl = quotesUrl.appending(queryItems: [URLQueryItem(name: "character", value: character)])
+        
+        // Fetch data
+        let (data, response) = try await URLSession.shared.data(from: fetchUrl)
+        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+            throw FetchError.badResponse("Character Quotes fetcher: ")
+        }
+        
+        // Decode data
+        let quote = try JSONDecoder().decode(QuoteModel.self, from: data)
+        
+        return quote
+    }
+    
     func fetchCharacter(_ name: String) async throws -> CharacterModel {
         let characterUrl = baseUrl.appending(path: "characters")
         let fetchUrl = characterUrl.appending(queryItems: [URLQueryItem(name: "name", value: name)])
@@ -109,4 +126,6 @@ struct FetchSerwises {
         
         return episodes.randomElement()
     }
+    
+    
 }

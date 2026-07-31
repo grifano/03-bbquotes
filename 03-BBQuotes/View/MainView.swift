@@ -35,7 +35,7 @@ struct MainView: View {
                                 .scaleEffect(2)
                             
                         case .successQuote:
-                            QuoteView(quote: vm.quote.quote, character: vm.character, images: vm.character.images, width: geo.size.width / 1.1, height: geo.size.height / 1.6)
+                            QuoteView(quote: vm.quote.quote, character: vm.character, images: vm.character.images, width: geo.size.width / 1.1, height: geo.size.height / 1.8)
                                 .onTapGesture {
                                     isCharacterViewActive.toggle()
                                 }
@@ -133,7 +133,7 @@ struct MainView: View {
         .preferredColorScheme(.dark)
         .ignoresSafeArea()
         .sheet(isPresented: $isCharacterViewActive) {
-            CharacterView(character: vm.character, show: show)
+            CharacterView(vm: vm, show: show)
         }
         .onAppear() {
                 Task {
