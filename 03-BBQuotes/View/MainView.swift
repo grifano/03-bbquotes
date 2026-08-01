@@ -46,6 +46,12 @@ struct MainView: View {
                         case .successCharacter:
                             RandomCharacterView(character: vm.character, show: show, width: geo.size.width / 1.1, height: geo.size.height / 1.2)
                             
+                        case .successSimpson:
+                            QuoteView(quote: vm.randomSimpson.phrase, character: vm.randomSimpson, images: vm.randomSimpson.images, width: geo.size.width / 1.1, height: geo.size.height / 1.8)
+                                .onTapGesture {
+                                    isCharacterViewActive.toggle()
+                                }
+                            
                         case .failed(let error):
                             Text(error.localizedDescription)
                                 .minimumScaleFactor(0.5)
@@ -82,7 +88,12 @@ struct MainView: View {
                         
                         Button {
                             Task {
-                                await vm.getQuote(for: show)
+                                let randomNumber = Int.random(in: 1...20)
+                                if randomNumber < 15 {
+                                    await vm.getQuote(for: show)
+                                } else {
+                                    await vm.getRandomSimpson()
+                                }
                             }
                         } label: {
                             Text("Get Quote")
@@ -133,12 +144,21 @@ struct MainView: View {
         .preferredColorScheme(.dark)
         .ignoresSafeArea()
         .sheet(isPresented: $isCharacterViewActive) {
-            CharacterView(vm: vm, show: show)
+            if case .successSimpson = vm.status {
+                SimpsonView(vm: vm, show: show)
+            } else {
+                CharacterView(vm: vm, show: show)
+            }
         }
         .onAppear() {
-                Task {
+            Task {
+                let randomNumber = Int.random(in: 1...20)
+                if randomNumber < 15 {
                     await vm.getQuote(for: show)
+                } else {
+                    await vm.getRandomSimpson()
                 }
+            }
         }
     }
 }

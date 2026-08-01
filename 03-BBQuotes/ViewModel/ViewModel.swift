@@ -16,6 +16,7 @@ class ViewModel {
         case successQuote
         case successEpisode
         case successCharacter
+        case successSimpson
         case failed(error: Error)
     }
     
@@ -25,6 +26,7 @@ class ViewModel {
     var quote: QuoteModel
     var character: CharacterModel
     var episode: EpisodeModel
+    var randomSimpson: SimpsonModel
     
     init() {
         let decoder = JSONDecoder()
@@ -39,6 +41,8 @@ class ViewModel {
         let episodeData = try! Data(contentsOf: Bundle.main.url(forResource: "sampleepisode", withExtension: "json")!)
         episode = try! decoder.decode(EpisodeModel.self, from: episodeData)
         
+        let simpsonData = try! Data(contentsOf: Bundle.main.url(forResource: "samplesimpson", withExtension: "json")!)
+        randomSimpson = try! decoder.decode(SimpsonModel.self, from: simpsonData)
     }
     
     func getQuote(for show: String) async {
@@ -88,6 +92,18 @@ class ViewModel {
             character = presentedCharacter
             character.death = try await fetcher.fetchDeath(for: character.name)
             status = .successCharacter
+        } catch {
+            status = .failed(error: error)
+        }
+    }
+    
+    func getRandomSimpson() async {
+        let randomInt = Int.random(in: 1...1182)
+
+        status = .fetching
+        do {
+            randomSimpson = try await fetcher.fetchSimpson(id: randomInt)
+            status = .successSimpson
         } catch {
             status = .failed(error: error)
         }

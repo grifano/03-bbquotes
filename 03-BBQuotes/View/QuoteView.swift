@@ -9,7 +9,7 @@ import SwiftUI
 
 struct QuoteView: View {
     let quote: String
-    let character: CharacterModel
+    let character: any CombinedCharacter
     let images: [URL]
     let width: CGFloat
     let height: CGFloat
@@ -34,7 +34,7 @@ struct QuoteView: View {
                                 .resizable()
                                 .scaledToFill()
                         } placeholder: {
-                            
+                            ProgressView()
                         }
                         .frame(width: width, height: height / 1.2)
                     }

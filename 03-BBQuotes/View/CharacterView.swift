@@ -43,7 +43,7 @@ struct CharacterView: View {
                             }
                             .overlay(alignment: .bottom) {
                                 VStack(spacing: 16) {
-                                    Text(vm.quote.quote)
+                                    Text("\"\(vm.quote.quote)\"")
                                         .foregroundStyle(.white)
                                     Button {
                                         Task {

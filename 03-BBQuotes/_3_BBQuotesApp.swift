@@ -25,6 +25,8 @@ struct _3_BBQuotesApp: App {
  ✅ Extend string to get rid of long image and color names
  ✅ Create static constants for show names
  ✅ Update sheet and add topbar, so it will be contrast with background image
+ - update and clearyfi UI,
+ - prepare for finishing and publish to GitHub
  */
 
 /**
@@ -33,5 +35,5 @@ struct _3_BBQuotesApp: App {
  ✅ Show random character image
  ✅ Fetch random Character
  ✅ Fetch Random quote on character screen
- - Fetch simpson quote randomly
+ ✅ Fetch simpson quote randomly
  */

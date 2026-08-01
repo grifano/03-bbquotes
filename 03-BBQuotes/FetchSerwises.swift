@@ -20,6 +20,7 @@ struct FetchSerwises {
     }
     
     private let baseUrl = URL(string: "https://breaking-bad-api-six.vercel.app/api")!
+    private let simpsonsBaseUrl = URL(string: "https://thesimpsonsapi.com/api")!
     
     func fetchQuote(from show: String) async throws -> QuoteModel {
         // Build fetch url
@@ -36,6 +37,25 @@ struct FetchSerwises {
         let quote = try JSONDecoder().decode(QuoteModel.self, from: data)
         
         return quote
+    }
+    
+    func fetchSimpson(id: Int) async throws -> SimpsonModel {
+        // Build fetch url
+        let characterUrl = simpsonsBaseUrl.appending(path: "characters")
+        let fetchUrl = characterUrl.appending(path: String(id))
+        
+        // Fetch data
+        let (data, response) = try await URLSession.shared.data(from: fetchUrl)
+        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+            throw FetchError.badResponse("Simpson fetcher: ")
+        }
+        
+        // Decode data
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let simpson = try decoder.decode(SimpsonModel.self, from: data)
+        
+        return simpson
     }
     
     func fetchCharacterQuote(from show: String, by character: String) async throws -> QuoteModel {
