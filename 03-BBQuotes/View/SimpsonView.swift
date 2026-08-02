@@ -25,9 +25,16 @@ struct SimpsonView: View {
             NavigationStack {
                 ScrollViewReader { proxy in
                     ZStack(alignment: .top) {
-                        Image(show.removeEmtyAndLoverCase())
-                            .resizable()
-                            .scaledToFit()
+                        if case .successSimpson = vm.status {
+                            Image(ImageResource.simpsons)
+                                .resizable()
+                                .scaledToFit()
+                        } else {
+                            Image(show.removeEmtyAndLoverCase())
+                                .resizable()
+                                .scaledToFit()
+                        }
+                        
                         
                         ScrollView {
                             TabView {

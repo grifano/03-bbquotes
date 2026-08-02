@@ -98,7 +98,7 @@ class ViewModel {
     }
     
     func getRandomSimpson() async {
-        let randomInt = Int.random(in: 1...1182)
+        let randomInt = Int.random(in: 1...20)
 
         status = .fetching
         do {
